@@ -26,7 +26,7 @@ scopes = [
 ]
 
 scope = " ".join(scopes)
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, open_browser=False))
 
 
 def get_saved_tracks():
