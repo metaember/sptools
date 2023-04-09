@@ -125,6 +125,8 @@ def backup_all_playlists(only_mine: bool = False, backup_time: Optional[datetime
     backup_time = datetime.datetime.now().isoformat() if backup_time is None else backup_time
 
     playlists = get_all_playlists()
+    logger.info(f"Backing up {len(playlists)} playlists")
+
     for playlist in playlists:
         if only_mine and playlist["owner"]["id"] != sp.me()["id"]:
             continue
@@ -143,12 +145,16 @@ def backup_playlist(playlist_id: str, backup_time: datetime.datetime):
 def backup_saved_tracks(backup_time: Optional[datetime.datetime] = None):
     backup_time = datetime.datetime.now().isoformat() if backup_time is None else backup_time
 
+    logger.info("Backing up saved tracks")
     tracks = get_saved_tracks()
+    logger.info(f"Found {len(tracks)} saved tracks")
     db = get_db()
+
     saved_tracks_table = db.table("saved_tracks")
-    for track in tracks:
-        track["backup_time"] = backup_time
-        saved_tracks_table.insert(track)
+    for i in range(len(tracks)):
+        tracks[i]["backup_time"] = backup_time
+    
+    saved_tracks_table.insert_multiple(tracks)
 
 
 def get_most_recent_backup_time() -> datetime.datetime:
